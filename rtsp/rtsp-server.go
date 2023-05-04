@@ -25,18 +25,21 @@ type Server struct {
 	pushersLock    sync.RWMutex
 	addPusherCh    chan *Pusher
 	removePusherCh chan *Pusher
+	once           sync.Once
 }
 
 var Instance *Server = &Server{
 	SessionLogger:  SessionLogger{log.New(os.Stdout, "[RTSPServer]", log.LstdFlags|log.Lshortfile)},
 	Stoped:         true,
-	TCPPort:        utils.Conf().Section("rtsp").Key("port").MustInt(554),
 	pushers:        make(map[string]*Pusher),
 	addPusherCh:    make(chan *Pusher),
 	removePusherCh: make(chan *Pusher),
 }
 
 func GetServer() *Server {
+	Instance.once.Do(func() {
+		Instance.TCPPort = utils.Conf().Section("rtsp").Key("port").MustInt(554)
+	})
 	return Instance
 }
 
