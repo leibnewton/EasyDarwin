@@ -102,6 +102,7 @@ func (server *Server) Start() (err error) {
 						cmd := exec.Command(ffmpeg, params...)
 						f, err := os.OpenFile(path.Join(dir, fmt.Sprintf("log.txt")), os.O_RDWR|os.O_CREATE, 0755)
 						if err == nil {
+							fmt.Fprintf(f, "Command: %s %v\n", ffmpeg, params)
 							cmd.Stdout = f
 							cmd.Stderr = f
 						}
